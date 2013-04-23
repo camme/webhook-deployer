@@ -84,7 +84,7 @@ function incoming(req, res) {
 
                 var branch = repoData.ref.split("/").pop();
 
-                console.log("\tChecking branch %s ...", branch);
+                console.log("  Checking branch '%s' ...", branch);
                 if (branch == deploy.branch) {
 
                     console.log("\n");
@@ -101,6 +101,12 @@ function incoming(req, res) {
                     });
 
                 }
+                else {
+                    console.log("  No, wrong branch, nothing to do");
+                }
+            }
+            else {
+                console.log("No, wrong repo, nothing to do");
             }
 
         }
