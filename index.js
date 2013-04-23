@@ -78,6 +78,8 @@ function incoming(req, res) {
 
             var repoData = JSON.parse(req.params.payload);
 
+            console.log("Checking %s...", repoData.repository.url);
+
             if (repoData.repository.url == deploy.repo) {
 
                 var branch = repoData.ref.split("/").pop();
