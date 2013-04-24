@@ -70,9 +70,18 @@ var server = http.createServer(function(req, res) {
 function incoming(req, res) {
 
 
+    lastInfo = "Incoming " + req.params.urlData + " - " + (new Date()).toString() + "\n\n";
+
+    var exists = fs.existsSync(options.config);
+
+    if (!exists) {
+        console.error("No config file found at %s", options.config);
+        lastInfo += "NO CONFIG FILE FOUND AT " + path.resolve(__dirname, options.config);
+        res.write(lastInfo);
+        return;
+    }
     var deployConfig = JSON.parse(fs.readFileSync(options.config, 'utf8'));
 
-    lastInfo = "Incoming " + req.params.urlData + " - " + (new Date()).toString() + "\n\n";
 
     deployConfig.deploys.forEach(function(deploy) {
 
