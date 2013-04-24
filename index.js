@@ -10,7 +10,7 @@ var fs = require("fs");
 var path = require("path");
 var querystring = require("querystring");
 var exec  = require('child_process').exec;
-
+var lastInfo = "";
 
 var server = http.createServer(function(req, res) {
 
@@ -21,8 +21,6 @@ var server = http.createServer(function(req, res) {
     });
 
     req.on("end", function() {
-
-    res.write("hello");
 
     if (req.method == "POST") {
 
@@ -72,6 +70,8 @@ function incoming(req, res) {
 
     var deployConfig = JSON.parse(fs.readFileSync(options.config, 'utf8'));
 
+    lastInfo = "Incoming " + req.params.urlData + " - " + (new Date()).toString() + "\n\n";
+
     deployConfig.deploys.forEach(function(deploy) {
 
         if (deploy.type == "github") {
@@ -79,17 +79,23 @@ function incoming(req, res) {
             var repoData = JSON.parse(req.params.payload);
 
             console.log("Checking incoming repo %s ...", repoData.repository.url);
+            lastInfo += "Checking incoming repo " + repoData.repository.url + "...\n>";
 
             if (repoData.repository.url == deploy.repo) {
 
                 var branch = repoData.ref.split("/").pop();
 
                 console.log("  Checking branch '%s' ...", branch);
+                lastInfo += "  Checking branch '" + branch + "' ...\n";
                 if (branch == deploy.branch) {
 
                     console.log("\n");
                     console.log("Run %s with branch '%s'", deploy.name, branch);
                     console.log("");
+
+                    lastInfo += "\n";
+                    lastInfo += "Run " + deploy.name + " with branch " + branch + "\n";
+                    lastInfo += "\n";
 
                     var localPath = path.resolve(deploy.basepath);
 
@@ -98,9 +104,11 @@ function incoming(req, res) {
                     }, function(err, result) { 
                     });
                     cmd.stdout.on('data', function(data) {
+                        lastInfo += data.toString() + "\n";
                         process.stdout.write(data.toString());
                     });
                     cmd.stderr.on('data', function(data) {
+                        lastInfo += "ERROR: " + data.toString() + "\n";
                         process.stdout.write("ERROR " +  data.toString());
                     });
 
@@ -108,10 +116,12 @@ function incoming(req, res) {
                 }
                 else {
                     console.log("  No, wrong branch, nothing to do");
+                    lastInfo += "  No, wrong branch, nothing to do\n";
                 }
             }
             else {
                 console.log("No, wrong repo, nothing to do");
+                lastInfo += "No, wrong repo, nothing to do\n";
             }
 
         }
@@ -120,6 +130,7 @@ function incoming(req, res) {
 }
 
 function index(req, res, next) {
+    res.write(lastInfo);
     //next();
 };
 
