@@ -22,10 +22,32 @@ You also need to set up ssh keys for the Network Service user, if your repo is p
 Follow gits guide on how you do it in windows [here](https://help.github.com/articles/generating-ssh-keys#platform-windows).
 
 After that, make sure the .ssh folder for the Network Service user has the keys and has the known_hosts file, so no problem might come when you interact with the git hub repo. 
-In Windows 2008 R2, the Network Service home folder is at C:\Windows\ServiceProfiles\NetworkService. Make sure the .ssh folder is there with the ssh keys etc.
+In Windows 2008 R2, the Network Service home folder is at 
+
+    C:\Windows\ServiceProfiles\NetworkService
+    
+Make sure the .ssh folder is there with the ssh keys etc.
   
 Now that the service is running, create a deploys.json that contains info about what the deployer will accept.
 
+#### Trouble
+If you have trouble with your keys in windows, you can always run 
+
+    ssh -v git@github.com
+
+If that gives you something like "bad number of files", you can add a config file to your .ssh with the following statements:
+
+    Host github.com
+    User git
+    Hostname ssh.github.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa
+    Port 443
+
+Run the test command again, and if you dont have any errors, you are good to go. Make sure that you copy the config file (and knownhosts) to your service user folder:
+
+    C:\Windows\ServiceProfiles\NetworkService
+    
 ### Ubuntu/OSX
 
 Here are the basic steps to install it:
