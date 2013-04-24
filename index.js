@@ -101,8 +101,14 @@ function incoming(req, res) {
 
                     var cmd = exec(deploy.command, {
                         cwd: localPath
-                    }, function(err, result) { 
-                    });
+                    }, function(error, stdout, stderr) {
+                        if (error) {
+                            lastInfo += "ERROR: " + error;
+                        }
+                        if (stderr) {
+                            lastInfo += "ERROR: " + stderr;
+                        }
+                     });
                     cmd.stdout.on('data', function(data) {
                         lastInfo += data.toString() + "\n";
                         process.stdout.write(data.toString());
