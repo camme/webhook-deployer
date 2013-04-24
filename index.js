@@ -103,11 +103,12 @@ function incoming(req, res) {
                         cwd: localPath
                     }, function(error, stdout, stderr) {
                         if (error) {
-                            lastInfo += "ERROR: " + error;
+                            lastInfo += "ERROR: " + error + "\n";
                         }
                         if (stderr) {
-                            lastInfo += "ERROR: " + stderr;
+                            lastInfo += "ERROR: " + stderr + "\n";
                         }
+                        lastInfo += "DONE!";
                      });
                     cmd.stdout.on('data', function(data) {
                         lastInfo += data.toString() + "\n";
