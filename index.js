@@ -12,6 +12,8 @@ var querystring = require("querystring");
 var exec  = require('child_process').exec;
 var lastInfo = "";
 
+var packageInformation = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+
 var server = http.createServer(function(req, res) {
 
 
@@ -136,9 +138,9 @@ function incoming(req, res) {
 
 }
 
-function index(req, res, next) {
+function index(req, res) {
+    res.write("Webhook deployer version" + packageInformation.version + "\n\n");
     res.write(lastInfo);
-    //next();
 };
 
 var routes = [{
