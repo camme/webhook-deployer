@@ -139,7 +139,7 @@ function incoming(req, res) {
 }
 
 function index(req, res) {
-    res.write("Webhook deployer version" + packageInformation.version + "\n\n");
+    res.write("Webhook deployer version " + packageInformation.version + "\n\n");
     res.write(lastInfo);
 };
 
