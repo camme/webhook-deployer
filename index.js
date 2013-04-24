@@ -93,12 +93,17 @@ function incoming(req, res) {
 
                     var localPath = path.resolve(deploy.basepath);
 
-                    exec(deploy.command, {
+                    var cmd = exec(deploy.command, {
                         cwd: localPath
                     }, function(err, result) { 
-                    }).stdout.on('data', function(data) {
+                    });
+                    cmd.stdout.on('data', function(data) {
                         process.stdout.write(data.toString());
                     });
+                    cmd.stderr.on('data', function(data) {
+                        process.stdout.write("ERROR " +  data.toString());
+                    });
+
 
                 }
                 else {
