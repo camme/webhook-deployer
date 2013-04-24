@@ -81,22 +81,21 @@ function incoming(req, res) {
             var repoData = JSON.parse(req.params.payload);
 
             console.log("Checking incoming repo %s ...", repoData.repository.url);
-            lastInfo += "Checking incoming repo " + repoData.repository.url + "...\n>";
+            lastInfo += "Checking incoming repo " + repoData.repository.url + "...\n";
 
             if (repoData.repository.url == deploy.repo) {
 
                 var branch = repoData.ref.split("/").pop();
 
                 console.log("  Checking branch '%s' ...", branch);
-                lastInfo += "  Checking branch '" + branch + "' ...\n";
+                lastInfo += ">  Checking branch '" + branch + "' ...\n";
                 if (branch == deploy.branch) {
 
                     console.log("\n");
                     console.log("Run %s with branch '%s'", deploy.name, branch);
                     console.log("");
 
-                    lastInfo += "\n";
-                    lastInfo += "Run " + deploy.name + " with branch " + branch + "\n";
+                    lastInfo += ">  Run " + deploy.name + " with branch " + branch + "\n";
                     lastInfo += "\n";
 
                     var localPath = path.resolve(deploy.basepath);
@@ -105,19 +104,35 @@ function incoming(req, res) {
                         cwd: localPath
                     }, function(error, stdout, stderr) {
                         if (error) {
-                            lastInfo += "ERROR: " + error + "\n";
+                            lastInfo += ">  ERROR (error): " + error + "\n";
                         }
                         if (stderr) {
-                            lastInfo += "ERROR: " + stderr + "\n";
+                            lastInfo += ">  ERROR (stderr): " + stderr + "\n";
                         }
-                        lastInfo += "DONE!";
+                        lastInfo += ">  DONE!";
                      });
                     cmd.stdout.on('data', function(data) {
                         lastInfo += data.toString() + "\n";
                         process.stdout.write(data.toString());
                     });
+                    cmd.stdout.on('close', function(data) {
+                        lastInfo += "CLOSE: " + data.toString() + "\n";
+                        process.stdout.write(data.toString());
+                    });
+                    cmd.stdout.on('exit', function(data) {
+                        lastInfo += "EXIT: " + data.toString() + "\n";
+                        process.stdout.write(data.toString());
+                    });
+                     cmd.stdout.on('disconnect', function(data) {
+                        lastInfo += "DISCONNECT: " + data.toString() + "\n";
+                        process.stdout.write(data.toString());
+                    });
+                      cmd.stdout.on('message', function(data) {
+                        lastInfo += "MESSAGE: " + data.toString() + "\n";
+                        process.stdout.write(data.toString());
+                    });
                     cmd.stderr.on('data', function(data) {
-                        lastInfo += "ERROR: " + data.toString() + "\n";
+                        lastInfo += ">  ERROR (on): " + data.toString() + "\n";
                         process.stdout.write("ERROR " +  data.toString());
                     });
 
@@ -125,7 +140,7 @@ function incoming(req, res) {
                 }
                 else {
                     console.log("  No, wrong branch, nothing to do");
-                    lastInfo += "  No, wrong branch, nothing to do\n";
+                    lastInfo += ">  No, wrong branch, nothing to do\n";
                 }
             }
             else {
