@@ -1,0 +1,16 @@
+{
+  "root": "/Users/camilo/Projects/webhook-deployer",
+  "pidPath": "/Users/camilo/Projects/webhook-deployer/pids",
+  "sockPath": "/Users/camilo/Projects/webhook-deployer/sock",
+  "loglength": 100,
+  "logstream": false,
+  "columns": [
+    "uid",
+    "command",
+    "script",
+    "forever",
+    "pid",
+    "logfile",
+    "uptime"
+  ]
+}

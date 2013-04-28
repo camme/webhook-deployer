@@ -1,0 +1,129 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var webdep = require("../lib/webdep.js");
+var fs = require("fs");
+var path = require("path");
+var daemon = require("daemon");
+var forever = require("forever");
+var program = require('commander');
+var child_process = require('child_process');
+
+program
+  .version(webdep.packageInformation.version)
+  .option('-p, --port [port]', 'Set the port number to use. Defaults to 8080')
+  .option('-c, --configfile [configfile]', 'Set the path to the config file to be used. Default to ./deploys.json')
+  .option('-d, --daemon', 'Run the webhook-deployer as a deamon with forever')
+  .option('-s, --stop', 'Stop webhook-deployer that was run as a deamon')
+  .parse(process.argv);
+
+var options = {};
+
+
+if (program.port) {
+    options.port = program.port;
+}
+
+if (program.configfile) {
+    options.config = program.configfile;
+}
+
+var appCommand = path.resolve(__dirname, 'webhook-deployer');
+if (program.daemon) {
+
+var out = fs.createWriteStream(path.resolve(__dirname, '../test.log'));
+out.on('open', function(){
+
+    var child = child_process.spawn(appCommand, ['-p', '10001'], { detached: true, stderr: out, stdout: out, cwd: path.resolve(__dirname, "../") });
+    child.on('error', function(err) {
+        console.log("ERROR", err);
+    });
+    child.on('data', function(data) {
+        console.log("Data", err);
+    });
+
+    fs.writeFileSync(path.resolve(__dirname, 'webdep.pid'), child.pid, "utf-8");
+
+    console.log(child.pid);
+
+    child.unref();
+
+    return;
+
+    process.exit(0);
+ 
+
+});
+    return;
+ 
+    forever.load({
+        root: path.resolve(__dirname, "../")
+    });
+
+    console.log(appCommand);
+    var child = forever.startDaemon(appCommand, {uid: 'thena', logFile: 'test.log'});
+    child.on('error', function(err) {
+        console.log("ERROR", err);
+    });
+    child.on('data', function(data) {
+        console.log("Data", err);
+    });
+     console.log("start as daemon");
+    return;
+ 
+var out = fs.createWriteStream(path.resolve(__dirname, 'stdout.log'));
+out.on('open', function(){
+
+    var child = daemon.daemon(
+        appCommand, 
+        [], 
+        {
+            cwd: path.resolve(__dirname, "../"),
+            stdout: out,
+            stderr: out
+
+        }
+    );
+
+
+    child.on("error", function(err) {
+        console.log(err);
+    });
+
+    child.on("data", function(data) {
+        console.log(data.toString());
+    });
+
+    child.on("exit", function(data) {
+        console.log("EXIT");
+    });
+
+
+    console.log(child);
+});
+
+    //var child = forever.startDaemon(appCommand, {uid: 'thena'});
+    //child.on('error', function(err) {
+        //console.log("ERROR", err);
+    //});
+    //console.log("start as daemon");
+    //forever.startServer(child);
+}
+else if (program.stop) {
+    //console.log(forever.list());
+    //forever.list("c", function(l) {
+            //console.log(l);
+    //});
+    
+    var pid = fs.readFileSync(path.resolve(__dirname, 'webdep.pid'), "utf-8");
+    console.log("stop as daemon with PID %s", pid);
+    child_process.exec("kill " + pid, function(err, data) {
+        console.log(err, data);
+    });
+}
+else {
+    console.log("staring.....");
+    webdep.init(options);
+}
+
