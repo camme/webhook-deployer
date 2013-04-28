@@ -12,6 +12,5 @@ logs
 results
 
 npm-debug.log
-deploys.json
 testdata.txt
 node_modules

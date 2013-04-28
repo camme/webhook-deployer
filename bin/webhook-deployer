@@ -11,119 +11,145 @@ var program = require('commander');
 var child_process = require('child_process');
 
 program
-  .version(webdep.packageInformation.version)
-  .option('-p, --port [port]', 'Set the port number to use. Defaults to 8080')
-  .option('-c, --configfile [configfile]', 'Set the path to the config file to be used. Default to ./deploys.json')
-  .option('-d, --daemon', 'Run the webhook-deployer as a deamon with forever')
-  .option('-s, --stop', 'Stop webhook-deployer that was run as a deamon')
-  .parse(process.argv);
+    .version(webdep.packageInformation.version)
+    .option('-p, --port [port]', 'Set the port number to use. Defaults to 8080')
+    .option('-c, --configfile [configfile]', 'Set the path to the config file to be used. Default to ./deploys.json')
+    .option('-d, --daemon', 'Run the webhook-deployer as a deamon with forever')
+    .option('-r, --repo <repo>', 'The repo to look out for. This option must be used together with the --branch and --command options.')
+    .option('-b, --branch <branch>', 'The branch to react to. This option must be used with the --repo and --command options.')
+    .option('-co, --command <command>', 'The command to use to deploy. This option must be used with the --repo and --branch options.')
+    .option('-s, --stop', 'Stop webhook-deployer that was run as a deamon')
+    .option('-l, --log <log>', 'Where to log')
+    .parse(process.argv);
 
 var options = {};
-
-
-if (program.port) {
-    options.port = program.port;
-}
-
-if (program.configfile) {
-    options.config = program.configfile;
-}
+options.port = program.port || webdep.defaultOptions.port;
+options.config = program.configfile || webdep.defaultOptions.config;
+options.repo = program.repo || null;
+options.command = program.command || null;
+options.branch = program.branch || null;
 
 var appCommand = path.resolve(__dirname, 'webhook-deployer');
+
+var deploysConfigFile = path.resolve(process.cwd(), options.config);
+
+if (!fs.existsSync(deploysConfigFile) || (!options.repo && !options.branch && !options.command)) {
+    console.error("No config file found at %s or no repo configured at the command line", deploysConfigFile)
+    console.error("You can either set the configuration in a config file and point to it with the --config option, or set the --repo, --branch and --command options.");
+    process.exit("No config file found");
+}
+
 if (program.daemon) {
 
-var out = fs.createWriteStream(path.resolve(__dirname, '../test.log'));
-out.on('open', function(){
+    var spawnOptions = { 
+        detached: true, 
+        //stdio: [ 'ignore', 'pipe', 'pipe'],
+        //stdio: [ 'ignore', out, err],
+        //stdio: [ 'ignore', 'ignore', 'ignore'],
+        stdio: [ 'ignore', 'pipe', 'pipe'],
+        cwd: path.resolve(__dirname, "../")
+    };
 
-    var child = child_process.spawn(appCommand, ['-p', '10001'], { detached: true, stderr: out, stdout: out, cwd: path.resolve(__dirname, "../") });
-    child.on('error', function(err) {
-        console.log("ERROR", err);
+    var out;
+    var err;
+
+    if (program.log) {
+        var logFile = path.resolve(__dirname, '../webhook-deployer.log');
+        out = fs.openSync(logFile, 'a');
+        err = fs.openSync(logFile, 'a');
+        spawnOptions.stdio = [ 'ignore', out, err];
+    }
+
+    var webdepArgs = [];
+    webdepArgs.push("--port");
+    webdepArgs.push(options.port);
+
+    if (options.config) {
+        webdepArgs.push("--configfile");
+        webdepArgs.push(deploysConfigFile);
+    }
+
+    var child = child_process.spawn(appCommand, webdepArgs, spawnOptions);
+
+    // set up objects dor stdout and stderr depending on where to put it
+    var so = null;
+    var se = null;
+
+    if (program.log) {
+        se = so = fs.createReadStream(logFile);
+    }
+    else {
+        so = child.stdout;
+        se = child.stderr;
+    }
+
+
+    so.on('data', function(data) {
+
+        if (data.toString().indexOf("Started") > -1){
+
+            console.log("Staring webhook-deployer %s as a daemon with port", webdep.packageInformation.version, options.port);
+            fs.writeFileSync(path.resolve(__dirname, 'webdep.pid'), child.pid, "utf-8");
+
+            //if (!program.log) {
+                //child.stdio = ['ignore', out, err];
+                //child.stdout = out;
+                //child.stderr = err;
+                //setTimeout(function() {
+            process.exit();
+                //}, 1000);
+            //}
+        }
+        else if (data.toString() != "\n") {
+            console.log(data.toString());
+        }
+
     });
-    child.on('data', function(data) {
-        console.log("Data", err);
+
+    se.on('data', function(data) {
+        if (data.toString().indexOf("EADDRINUSE") > -1) {
+            console.log("Webhook-deployer coudnt start because the port is already being used.");
+        }
+        else {
+            //console.log(data.toString());
+        }
     });
-
-    fs.writeFileSync(path.resolve(__dirname, 'webdep.pid'), child.pid, "utf-8");
-
-    console.log(child.pid);
 
     child.unref();
 
-    return;
 
-    process.exit(0);
- 
-
-});
-    return;
- 
-    forever.load({
-        root: path.resolve(__dirname, "../")
-    });
-
-    console.log(appCommand);
-    var child = forever.startDaemon(appCommand, {uid: 'thena', logFile: 'test.log'});
-    child.on('error', function(err) {
-        console.log("ERROR", err);
-    });
-    child.on('data', function(data) {
-        console.log("Data", err);
-    });
-     console.log("start as daemon");
-    return;
- 
-var out = fs.createWriteStream(path.resolve(__dirname, 'stdout.log'));
-out.on('open', function(){
-
-    var child = daemon.daemon(
-        appCommand, 
-        [], 
-        {
-            cwd: path.resolve(__dirname, "../"),
-            stdout: out,
-            stderr: out
-
-        }
-    );
-
-
-    child.on("error", function(err) {
-        console.log(err);
-    });
-
-    child.on("data", function(data) {
-        console.log(data.toString());
-    });
-
-    child.on("exit", function(data) {
-        console.log("EXIT");
-    });
-
-
-    console.log(child);
-});
-
-    //var child = forever.startDaemon(appCommand, {uid: 'thena'});
-    //child.on('error', function(err) {
-        //console.log("ERROR", err);
+    //o.on('error', function(err) {
+    //console.log("ERROR", err);
     //});
-    //console.log("start as daemon");
-    //forever.startServer(child);
+    //child.on('message', function(data) {
+    //console.log("message", data.toString());
+    //});
+    //child.on('error', function(data) {
+        //console.log("Data", data);
+    //});
+
+
+    //console.log(child.pid);
+
+
+    return;
+
+
+
+    //});
 }
 else if (program.stop) {
-    //console.log(forever.list());
-    //forever.list("c", function(l) {
-            //console.log(l);
-    //});
-    
     var pid = fs.readFileSync(path.resolve(__dirname, 'webdep.pid'), "utf-8");
-    console.log("stop as daemon with PID %s", pid);
     child_process.exec("kill " + pid, function(err, data) {
-        console.log(err, data);
+        if (err) {
+            console.log(err, data);
+        }
+        else {
+            console.log("Stopped webhook-deployer daemon with PID %s", pid);
+        }
     });
 }
 else {
-    console.log("staring.....");
     webdep.init(options);
 }
 
