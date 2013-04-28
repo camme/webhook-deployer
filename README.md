@@ -4,6 +4,36 @@ webhook-deployer
 Deployer server app triggered by (github) webhooks
 
 ## Install
+    
+### Ubuntu/OSX
+
+On ubuntu just run
+
+    npm install -g webhook-deployer
+
+And the run it like this:
+
+    webhook-deployer -c yourconfigfile
+
+And if you want to run it as a daemon just add the -d option:
+
+    webhook-deployer -c yourconfigfile -d
+    
+Here are all other options:
+
+    Usage: webhook-deployer [options]
+
+    Options:
+
+        -h, --help                     output usage information
+        -V, --version                  output the version number
+        -p, --port [port]              Set the port number to use. Defaults to 8080
+        -c, --configfile [configfile]  Set the path to the config file to be used. Default to ./deploys.json
+        -d, --daemon                   Run the webhook-deployer as a deamon with forever
+        -s, --stop                     Stop webhook-deployer that was run as a deamon
+        -l, --log <log>                Where to log
+
+(there are some more options but they dont work yet)
 
 ### Windows
 You need, naturally, nodejs to run this. Just run the installer from [http://nodejs.org/](http://nodejs.org/).
@@ -47,19 +77,8 @@ If that gives you something like "bad number of files", you can add a config fil
 Run the test command again, and if you dont have any errors, you are good to go. Make sure that you copy the config file (and knownhosts) to your service user folder:
 
     C:\Windows\ServiceProfiles\NetworkService
-    
-### Ubuntu/OSX
 
-Here are the basic steps to install it:
 
-    git clone https://github.com/24hr-malmo/webhook-deployer
-    cd webhook-deployer
-    npm install
-    npm install -g forever
-    forever start index.js
-
-Now that the service is running, create a deploys.json that contains info about what the deployer will accept. 
-    
 ## Config
 Create a deploys.json (there is an deploys.json.example to look at) inside the folder where you cloned webhook-deployer. 
 Config it with the following format:
