@@ -42,9 +42,6 @@ if (program.daemon) {
 
     var spawnOptions = { 
         detached: true, 
-        //stdio: [ 'ignore', 'pipe', 'pipe'],
-        //stdio: [ 'ignore', out, err],
-        //stdio: [ 'ignore', 'ignore', 'ignore'],
         stdio: [ 'ignore', 'pipe', 'pipe'],
         cwd: path.resolve(__dirname, "../")
     };
@@ -53,7 +50,7 @@ if (program.daemon) {
     var err;
 
     if (program.log) {
-        var logFile = path.resolve(__dirname, '../webhook-deployer.log');
+        var logFile = path.resolve(process.cwd(), program.log);
         out = fs.openSync(logFile, 'a');
         err = fs.openSync(logFile, 'a');
         spawnOptions.stdio = [ 'ignore', out, err];
@@ -86,18 +83,9 @@ if (program.daemon) {
     so.on('data', function(data) {
 
         if (data.toString().indexOf("Started") > -1){
-
             console.log("Staring webhook-deployer %s as a daemon with port", webdep.packageInformation.version, options.port);
             fs.writeFileSync(path.resolve(__dirname, 'webdep.pid'), child.pid, "utf-8");
-
-            //if (!program.log) {
-                //child.stdio = ['ignore', out, err];
-                //child.stdout = out;
-                //child.stderr = err;
-                //setTimeout(function() {
             process.exit();
-                //}, 1000);
-            //}
         }
         else if (data.toString() != "\n") {
             console.log(data.toString());
