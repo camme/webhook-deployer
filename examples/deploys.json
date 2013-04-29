@@ -2,7 +2,7 @@
     "deploys": [{
         "name": "Webhook Deployer",
         "type": "github",
-        "repo": "https://github.com/24hr-malmo/webhook-deployer",
+        "repo": "https://github.com/Camme/webhook-deployer",
         "basepath": "/Users/camilo/Projects/24hr-deployer",
         "command": "git pull",
         "branch": "master"

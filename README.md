@@ -41,7 +41,7 @@ To use it, you need to create a deploys.json in the app folder.
 
 Here are the basic steps to install it:
 
-    git clone https://github.com/24hr-malmo/webhook-deployer
+    git clone https://github.com/Camme/webhook-deployer
     cd webhook-deployer
     npm install
     npm run-script install-windows-service
@@ -87,7 +87,7 @@ Config it with the following format:
         "deploys": [{
             "name": "Your deploy name",
             "type": "github",
-            "repo": "[the repo url in https format, example https://github.com/24hr-malmo/webhook-deployer]",
+            "repo": "[the repo url in https format, example https://github.com/Camme/webhook-deployer]",
             "basepath": "[path to where the deploy command will run]",
             "command": "[the command to run]",
             "branch": "[what branch to react to]"
@@ -100,7 +100,7 @@ So an actual example might look like this:
         "deploys": [{
             "name": "Deploy webhook deploy",
             "type": "github",
-            "repo": "https://github.com/24hr-malmo/webhook-deployer",
+            "repo": "https://github.com/Camme/webhook-deployer",
             "basepath": "/var/node/webhook-deployer",
             "command": "git pull",
             "branch": "master"
@@ -109,7 +109,7 @@ So an actual example might look like this:
 
 You also need to add the webhook to your github repo. The call should be made to http://your.cool.server:8080/incoming/yourcoolprojectname
 
-The above example would run "git pull" whenever a push to the master branch for https://github.com/24hr-malmo/webhook-deployer is made.
+The above example would run "git pull" whenever a push to the master branch for https://github.com/Camme/webhook-deployer is made.
 
 ## License 
 
