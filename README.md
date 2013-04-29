@@ -29,7 +29,7 @@ Here are all other options:
         -V, --version                  output the version number
         -p, --port [port]              Set the port number to use. Defaults to 8080
         -c, --configfile [configfile]  Set the path to the config file to be used. Default to ./deploys.json
-        -d, --daemon                   Run the webhook-deployer as a deamon with forever
+        -d, --daemon                   Run the webhook-deployer as a deamon
         -s, --stop                     Stop webhook-deployer that was run as a deamon
         -l, --log <log>                Where to log
 

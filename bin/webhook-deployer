@@ -6,7 +6,6 @@ var webdep = require("../lib/webdep.js");
 var fs = require("fs");
 var path = require("path");
 var daemon = require("daemon");
-var forever = require("forever");
 var program = require('commander');
 var child_process = require('child_process');
 
@@ -14,7 +13,7 @@ program
     .version(webdep.packageInformation.version)
     .option('-p, --port [port]', 'Set the port number to use. Defaults to 8080')
     .option('-c, --configfile [configfile]', 'Set the path to the config file to be used. Default to ./deploys.json')
-    .option('-d, --daemon', 'Run the webhook-deployer as a deamon with forever')
+    .option('-d, --daemon', 'Run the webhook-deployer as a deamon')
     .option('-r, --repo <repo>', 'The repo to look out for. This option must be used together with the --branch and --command options.')
     .option('-b, --branch <branch>', 'The branch to react to. This option must be used with the --repo and --command options.')
     .option('-co, --command <command>', 'The command to use to deploy. This option must be used with the --repo and --branch options.')
