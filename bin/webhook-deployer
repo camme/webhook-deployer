@@ -5,7 +5,6 @@
 var webdep = require("../lib/webdep.js");
 var fs = require("fs");
 var path = require("path");
-var daemon = require("daemon");
 var program = require('commander');
 var child_process = require('child_process');
 
@@ -14,11 +13,12 @@ program
     .option('-p, --port [port]', 'Set the port number to use. Defaults to 8080')
     .option('-c, --configfile [configfile]', 'Set the path to the config file to be used. Default to ./deploys.json')
     .option('-d, --daemon', 'Run the webhook-deployer as a deamon')
-    .option('-r, --repo <repo>', 'The repo to look out for. This option must be used together with the --branch and --command options.')
-    .option('-b, --branch <branch>', 'The branch to react to. This option must be used with the --repo and --command options.')
-    .option('-co, --command <command>', 'The command to use to deploy. This option must be used with the --repo and --branch options.')
+    //.option('-r, --repo <repo>', 'The repo to look out for. This option must be used together with the --branch and --command options.')
+    //.option('-b, --branch <branch>', 'The branch to react to. This option must be used with the --repo and --command options.')
+    //.option('-co, --command <command>', 'The command to use to deploy. This option must be used with the --repo and --branch options.')
     .option('-s, --stop', 'Stop webhook-deployer that was run as a deamon')
     .option('-l, --log <log>', 'Where to log')
+    .option('-a, --auto <type>', 'Auto set up hooks. Works only with github so set this to "github"')
     .parse(process.argv);
 
 var options = {};
@@ -28,17 +28,56 @@ options.repo = program.repo || null;
 options.command = program.command || null;
 options.branch = program.branch || null;
 
+// the command to run, ie this command itself
 var appCommand = path.resolve(__dirname, 'webhook-deployer');
 
+// which config file to use
 var deploysConfigFile = path.resolve(process.cwd(), options.config);
 
+// check if the config file exists, otherwise check if we are using the options instead
 if (!fs.existsSync(deploysConfigFile) || (!options.repo && !options.branch && !options.command)) {
-    console.error("No config file found at %s or no repo configured at the command line", deploysConfigFile)
-    console.error("You can either set the configuration in a config file and point to it with the --config option, or set the --repo, --branch and --command options.");
+    console.error("No config file found at %s or no repo configured at the command line.", deploysConfigFile);
+    console.log("");
+    console.error("You can either set the configuration in a config file and point to it with the --config option.");
+    //console.error(", or set the --repo, --branch and --command options.");
+    console.log("");
     process.exit("No config file found");
 }
 
-if (program.daemon) {
+if (program.auto && program.auto == 'github') {
+    require('../lib/setuphooks')('github', deploysConfigFile, function(err) {
+        if (err) {
+           console.log("ERR", err); 
+           process.exit(err);
+        }
+        else if (program.daemon) {
+            setupDaemon(options);
+        }
+        else {
+            webdep.init(options);
+        }
+    });
+}
+else if (program.daemon) {
+    setupDaemon(options);
+}
+else if (program.stop) {
+    var pid = fs.readFileSync(path.resolve(__dirname, 'webdep.pid'), "utf-8");
+    child_process.exec("kill " + pid, function(err, data) {
+        if (err) {
+            console.log(err, data);
+        }
+        else {
+            console.log("Stopped webhook-deployer daemon with PID %s", pid);
+        }
+    });
+}
+else {
+    webdep.init(options);
+}
+
+
+function setupDaemon(options){
 
     var spawnOptions = { 
         detached: true, 
@@ -119,24 +158,5 @@ if (program.daemon) {
     //console.log(child.pid);
 
 
-    return;
 
-
-
-    //});
 }
-else if (program.stop) {
-    var pid = fs.readFileSync(path.resolve(__dirname, 'webdep.pid'), "utf-8");
-    child_process.exec("kill " + pid, function(err, data) {
-        if (err) {
-            console.log(err, data);
-        }
-        else {
-            console.log("Stopped webhook-deployer daemon with PID %s", pid);
-        }
-    });
-}
-else {
-    webdep.init(options);
-}
-

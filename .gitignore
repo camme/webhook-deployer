@@ -14,3 +14,5 @@ results
 npm-debug.log
 testdata.txt
 node_modules
+
+deploys.json

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Webhook Deployer</title>
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/nunt/nunt.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/js/main.js"></script>
+        <link rel="stylesheet" href="/css/style.css" type="text/css" />
+    </head>
+    <body>	
+        <div class="info">
+        <h1>Webhook Deployer v{{version}}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>name</th>
+                    <th>repo</th>
+                    <th>branch</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#deploys}}
+                <tr>
+                    <td>{{deploy.name}}</td>
+                    <td>{{deploy.repo}}</td>
+                    <td>{{deploy.branch}}</td>
+                </tr>
+                {{/deploys}}
+            </tbody>
+        </table>
+        </div>
+        <div class="log-container">
+            <h2>Log:</h2>
+            <pre id="log">{{log}}</pre>
+        </div>
+    </body>
+</html>
