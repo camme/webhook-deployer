@@ -10,25 +10,42 @@
     </head>
     <body>	
         <div class="info">
-        <h1>Webhook Deployer v{{version}}</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>name</th>
-                    <th>repo</th>
-                    <th>branch</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#deploys}}
-                <tr>
-                    <td>{{deploy.name}}</td>
-                    <td>{{deploy.repo}}</td>
-                    <td>{{deploy.branch}}</td>
-                </tr>
-                {{/deploys}}
-            </tbody>
-        </table>
+            <header>
+                <h1>Webhook Deployer v{{version}}</h1>
+                <p>Your auto-deploy companion</p>
+            </header>
+            <div class="login-box">
+                <div class="input-box">
+                    <label>username:</label>
+                    <input type="text" id="username" />
+                </div>
+                <div class="input-box">
+                    <label>password:</label>
+                    <input type="password" id="password" />
+                </div>
+                <button id="login-button">login</button>
+                <div class="error">error!</div>
+            </div>
+            <div class="deploys-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>name</th>
+                            <th>repo</th>
+                            <th>branch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#deploys}}
+                        <tr>
+                            <td>{{deploy.name}}</td>
+                            <td>{{deploy.repo}}</td>
+                            <td>{{deploy.branch}}</td>
+                        </tr>
+                        {{/deploys}}
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="log-container">
             <h2>Log:</h2>

@@ -44,6 +44,12 @@ if (!fs.existsSync(deploysConfigFile) || (!options.repo && !options.branch && !o
     process.exit("No config file found");
 }
 
+
+if (program.configfile && fs.existsSync(deploysConfigFile)) {
+    options = JSON.parse(fs.readFileSync(deploysConfigFile, 'utf8'));
+    options.config = program.configfile;
+}
+
 if (program.auto && program.auto == 'github') {
     require('../lib/setuphooks')('github', deploysConfigFile, function(err) {
         if (err) {
