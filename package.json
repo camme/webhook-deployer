@@ -1,6 +1,6 @@
 {
   "name": "webhook-deployer",
-  "version": "0.4.9",
+  "version": "0.5.9",
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
