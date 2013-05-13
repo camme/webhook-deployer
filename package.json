@@ -4,7 +4,7 @@
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
-    "start": "webhook-deployer",
+    "start": "node index.js",
     "test": "NODE_ENV=test node node_modules/grunt-cli/bin/grunt",
     "install-windows-service": "winser -i",
     "uninstall-windows-service": "winser -r"
