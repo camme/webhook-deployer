@@ -5,6 +5,7 @@
         <title>Webhook Deployer</title>
         <script type="text/javascript" src="/socket.io/socket.io.js"></script>
         <script type="text/javascript" charset="utf-8" src="/nunt/nunt.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/js/mustache.js"></script>
         <script type="text/javascript" charset="utf-8" src="/js/main.js"></script>
         <link rel="stylesheet" href="/css/style.css" type="text/css" />
     </head>
@@ -30,7 +31,6 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>name</th>
                             <th>repo</th>
                             <th>branch</th>
                         </tr>
@@ -38,7 +38,6 @@
                     <tbody>
                         {{#deploys}}
                         <tr>
-                            <td>{{deploy.name}}</td>
                             <td>{{deploy.repo}}</td>
                             <td>{{deploy.branch}}</td>
                         </tr>

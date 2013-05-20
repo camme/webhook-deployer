@@ -1,6 +1,6 @@
 {
   "name": "webhook-deployer",
-  "version": "0.5.9",
+  "version": "0.6.1",
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "should": "~1.2.2",
     "grunt-simple-mocha": "~0.4.0",
     "grunt-cli": "~0.1.8",
-    "webdriverjs": "~0.7.2"
+    "webdriverjs": "~0.7.3"
   },
   "dependencies": {
     "winser": "~0.1.3",
@@ -39,6 +39,6 @@
     "mustache": "~0.7.2",
     "cookies": "~0.3.6",
     "keygrip": "~0.2.2",
-    "nunt": "~1.5.3"
+    "nunt": "~1.5.5"
   }
 }

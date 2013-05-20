@@ -8,9 +8,9 @@
     });
 
     nunt.on("deploys", function(e) {
-        console.log(e);
-        //var logDom = document.getElementById("log");
-        //logDom.innerHTML = e.log;
+        var template = "{{#deploys}}<tr><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
+        var html = Mustache.to_html(template, e);
+        document.querySelector(".deploys-box tbody").innerHTML = html;
     });
 
     nunt.on("not-logged-in", function(e) {

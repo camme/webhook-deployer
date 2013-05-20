@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var cp = require('child_process');
 var nunt = require('nunt');
+var userConfig = null;
 
 describe("Login", function() {
 
@@ -68,32 +69,41 @@ describe("Login", function() {
             .call(done);
     });
 
-    it("login in with incorrect info will send an error event", function(done) {
-        nunt.on("login-error", function() {
+    it("with incorrect info will send an error event", function(done) {
+        function cb() {
             done();
-        });
+            nunt.removeListener('login-error', cb);
+        }
+
+        nunt.on("login-error", cb);
 
         // fake client
         var mockClient = {handshake: {session: {} }};
         nunt.send("login", {username: "1", password: "2", _client: mockClient});
     });
 
-    it("login in with the correct info will send an login event", function(done) {
-        nunt.on("login-succeded", function() {
+    it("with the correct info will send an login event", function(done) {
+
+        function cb() {
             done();
-            nunt.removeListener('login-succeded');
-        });
+            nunt.removeListener('login-succeded', cb);
+        }
+
+        nunt.on("login-succeded", cb);
 
         // fake client
         var mockClient = {handshake: {session: {} }};
         nunt.send("login", {username: "hi", password: "hello", _client: mockClient});
     });
 
-    it("login in from the site works correclty", function(done) {
+    it("from the site works correclty", function(done) {
 
-        nunt.on("login-succeded", function() {
+        function cb() {
             done();
-        });
+            nunt.removeListener('login-succeded', cb);
+        }
+
+        nunt.on("login-succeded", cb);
 
         client
             .url('http://localhost:8808')
@@ -104,5 +114,47 @@ describe("Login", function() {
 
     });
 
+
+    it("a config with a different user/password works as well", function(done) {
+
+        var hasFailed = false;
+        function cb() {
+            hasFailed.should.equal(true);
+            nunt.removeListener('login-succeded', cb);
+            done();
+        }
+
+        function cbError() {
+            hasFailed = true;
+            nunt.removeListener('login-error', cbError);
+            var mockClient = {handshake: {session: {} }};
+            nunt.send("login", {username: "data", password: "maskin", _client: mockClient});
+        }
+
+
+        nunt.on("login-succeded", cb);
+        nunt.on("login-error", cbError);
+
+        var deploys = [{
+            "name": "Webhook Deployer",
+            "type": "github",
+            "repo": "https://github.com/camme/temp",
+            "basepath": __dirname,
+            "command": "ls",
+            "branch": "master"
+        }];
+
+        webdep.stop(function() {
+
+            webdep.init({username: "data", password: "maskin", deploys: deploys, logToConsole: false, port: 8808}, function(err) {
+
+                // fake client
+                var mockClient = {handshake: {session: {} }};
+                nunt.send("login", {username: "hi", password: "hello", _client: mockClient});
+
+            });
+        });
+
+    });
 
 });
