@@ -8,9 +8,15 @@
     });
 
     nunt.on("deploys", function(e) {
-        var template = "{{#deploys}}<tr><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
+        var template = "{{#deploys}}<tr data-id='{{deploy.id}}'><td><button>DEPLOY</button><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
         var html = Mustache.to_html(template, e);
         document.querySelector(".deploys-box tbody").innerHTML = html;
+
+        var buttons = document.querySelector(".deploys-box button");
+        buttons.addEventListener("click", function() {
+            var id = this.parentNode.parentNode.getAttribute("data-id");
+            nunt.send("run-deploy", {id: id});
+        }, false);
     });
 
     nunt.on("not-logged-in", function(e) {
