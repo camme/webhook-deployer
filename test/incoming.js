@@ -74,7 +74,7 @@ describe("Incoming", function() {
         var req = http.request(options, function(res) {
             res.statusCode.should.equal(200);
             setTimeout(function() {
-                var content = fs.readFileSync(dumpFile, 'utf8').replace(/\n/, "");
+                var content = fs.readFileSync(dumpFile, 'utf8').replace(/\r?\n/, "").trim();
                 content.should.equal(now.toString());
                 done();
             }, 100);
