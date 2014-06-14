@@ -53,12 +53,28 @@ describe("Incoming", function() {
         req.end();
     });
 
+    it("a second post to the incoming endpoint will give a 200 status if the correct data is sent to a github deploy type", function(done) {
+        var options = { deploys: deploys, host: 'localhost', port: 8808, path: '/incoming/test', method: "POST" };
+        var payload = JSON.stringify({ref:"data/maskin/master", repository: {url: deploys[0].repo}});
+        var req1 = http.request(options, function(res1) {
+            var req2 = http.request(options, function(res2) {
+                res2.statusCode.should.equal(200);
+                done();
+            });
+            req2.write("payload=" + payload);
+            req2.end();
+        });
+        req1.write("payload=" + payload);
+        req1.end();
+    });
+
+
     it("a post to the incoming endpoint will give run a deploy command for a github deploy type", function(done) {
         var options = { host: 'localhost', port: 8808, path: '/incoming/test', method: "POST" };
         var req = http.request(options, function(res) {
             res.statusCode.should.equal(200);
             setTimeout(function() {
-                var content = fs.readFileSync(dumpFile, 'utf8').replace(/\n/, "");
+                var content = fs.readFileSync(dumpFile, 'utf8').replace(/\r?\n/, "").trim();
                 content.should.equal(now.toString());
                 done();
             }, 100);
