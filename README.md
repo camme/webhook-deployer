@@ -46,7 +46,7 @@ Here are the basic steps to install it:
     npm install
     npm run-script install-windows-service
   
-When the windows service is installed, go inte Administrator tools/Services and change the user for the service to Network Service (no password). Also make sure the Network Service has rights to modify the folder that your command needs to access.
+When the windows service is installed, go into Administrator tools/Services and change the user for the service to Network Service (no password). Also make sure the Network Service has rights to modify the folder that your command needs to access.
 You also need to set up ssh keys for the Network Service user, if your repo is private at least.
 
 Follow gits guide on how you do it in windows [here](https://help.github.com/articles/generating-ssh-keys#platform-windows).
