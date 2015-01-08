@@ -1,13 +1,13 @@
 (function() {
 
-    nunt.on(nunt.CONNECTED, function() { });
+    var socket = io(); 
 
-    nunt.on("log", function(e) {
+    socket.on("log", function(e) {
         var logDom = document.getElementById("log");
         logDom.innerHTML = e.log;
     });
 
-    nunt.on("deploys", function(e) {
+    socket.on("deploys", function(e) {
         var template = "{{#deploys}}<tr data-id='{{deploy.id}}'><td><button>DEPLOY</button><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
         var html = Mustache.to_html(template, e);
         document.querySelector(".deploys-box tbody").innerHTML = html;
@@ -19,7 +19,7 @@
         }, false);
     });
 
-    nunt.on("not-logged-in", function(e) {
+    socket.on("not-logged-in", function(e) {
 
         var logDom = document.getElementById("log");
         logDom.innerHTML = "Please login!";
@@ -33,17 +33,17 @@
             document.getElementById("log").innerHTML = "Trying to log in...";
             var username = document.querySelector(".login-box #username").value;
             var password = document.querySelector(".login-box #password").value;
-            nunt.send("login", {username: username, password: password});
+            socket.emit("login", {username: username, password: password});
         }, false);
 
     });
 
-    nunt.on("login-error", function(e) {
+    socket.on("login-error", function(e) {
         document.getElementById("log").innerHTML = "Login error";
         document.querySelector(".login-box .error").style.display = "block";
     });
 
-    nunt.on("login-succeded", function(e) {
+    socket.on("login-succeded", function(e) {
         document.querySelector(".login-box button").removeEventListener("click");
         document.querySelector(".login-box").style.display = "none";
         document.querySelector(".deploys-box").style.display = "block";

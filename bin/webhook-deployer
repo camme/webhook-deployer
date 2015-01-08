@@ -24,9 +24,10 @@ program
 var options = {};
 options.port = program.port || webdep.defaultOptions.port;
 options.config = program.configfile || webdep.defaultOptions.config;
-options.repo = program.repo || null;
+/*options.repo = program.repo || null;
 options.command = program.command || null;
 options.branch = program.branch || null;
+*/
 
 // the command to run, ie this command itself
 var appCommand = path.resolve(__dirname, 'webhook-deployer');
@@ -35,10 +36,10 @@ var appCommand = path.resolve(__dirname, 'webhook-deployer');
 var deploysConfigFile = path.resolve(process.cwd(), options.config);
 
 // check if the config file exists, otherwise check if we are using the options instead
-if (!fs.existsSync(deploysConfigFile) || (!options.repo && !options.branch && !options.command)) {
+if (!fs.existsSync(deploysConfigFile)) { // || (!options.repo && !options.branch && !options.command)) {
     console.error("No config file found at %s or no repo configured at the command line.", deploysConfigFile);
     console.log("");
-    console.error("You can either set the configuration in a config file and point to it with the --config option.");
+    console.error("You can either set the configuration in a config file and point to it with the --configfile option.");
     //console.error(", or set the --repo, --branch and --command options.");
     console.log("");
     process.exit("No config file found");
@@ -48,6 +49,11 @@ if (!fs.existsSync(deploysConfigFile) || (!options.repo && !options.branch && !o
 if (program.configfile && fs.existsSync(deploysConfigFile)) {
     options = JSON.parse(fs.readFileSync(deploysConfigFile, 'utf8'));
     options.config = program.configfile;
+}
+
+// command line args are more important
+if (program.port) {
+    options.port = program.port;
 }
 
 if (program.auto && program.auto == 'github') {

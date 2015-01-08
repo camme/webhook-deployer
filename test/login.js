@@ -1,39 +1,44 @@
 var webdep = require("../index.js");
 var should = require('should');
-var webdriverjs = require('webdriverjs');
+var webdriverio = require('webdriverio');
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var cp = require('child_process');
-var nunt = require('nunt');
 var userConfig = null;
 
 describe("Login", function() {
 
     this.timeout(10000);
+
     var client = {};
     var wdServerProcess = null;
+    var socket;
 
     before(function(done){
         var wdInit = false;
-        var args = ["-jar", path.resolve(__dirname, "../node_modules/webdriverjs/bin/selenium-server-standalone-2.31.0.jar")];
+        var seleniumServerPath = path.join(__dirname, "../node_modules/selenium-standalone/.selenium/2.43.1/server.jar");
+        var args = ["-jar", seleniumServerPath];
         wdServerProcess = cp.spawn("java", args);
-        wdServerProcess.stdout.on("data", function(result) {
+
+        function next(result) {
             if (!wdInit && result.toString().indexOf("Started HttpContext") > -1) {
-                client = webdriverjs.remote({ logLevel: 'silent', desiredCapabilities: {browserName: 'phantomjs'} });
-                client.init();
-                done();
+                client = webdriverio.remote({ logLevel: 'silent', desiredCapabilities: {browserName: 'phantomjs'} });
+                client.init(done);
                 wdInit = true;
             }
-        });
+        }
+
+        wdServerProcess.stdout.on("data", next);
+        wdServerProcess.stderr.on("data", next);
+
     });
 
     after(function(done) {
-        client.end(function() {
-            wdServerProcess.on("close", function() { console.log(":hej"); });
-            wdServerProcess.kill('SIGHUP');
-            done();
-        });
+        wdServerProcess.kill('SIGHUP');
+        wdServerProcess.on("close", function() { console.log(":hej"); });
+        client.end(function() { });
+        setTimeout(done, 1000);
     });
 
     beforeEach(function(done) {
@@ -48,15 +53,14 @@ describe("Login", function() {
         }];
 
         webdep.init({deploys: deploys, logToConsole: false, port: 8808}, function(err) {
+            socket = require('socket.io-client')('http://localhost:8808');
             done();
         });
 
     });
 
     afterEach(function(done) {
-        webdep.stop(function() {
-            done();
-        });
+        webdep.stop(done);
     });
 
     it("when loading the info page the first time, you are not loged in.", function(done) {
@@ -70,47 +74,43 @@ describe("Login", function() {
     });
 
     it("with incorrect info will send an error event", function(done) {
+
         function cb() {
             done();
-            nunt.removeListener('login-error', cb);
         }
 
-        nunt.on("login-error", cb);
+        socket.once("login-error", cb);
+        socket.emit("login", {username: "1", password: "2"});
 
-        // fake client
-        var mockClient = {handshake: {session: {} }};
-        nunt.send("login", {username: "1", password: "2", _client: mockClient});
     });
 
-    it("with the correct info will send an login event", function(done) {
+    it("with the correct info will send a login event", function(done) {
 
         function cb() {
             done();
-            nunt.removeListener('login-succeded', cb);
         }
 
-        nunt.on("login-succeded", cb);
+        socket.once("login-succeded", cb);
 
         // fake client
-        var mockClient = {handshake: {session: {} }};
-        nunt.send("login", {username: "hi", password: "hello", _client: mockClient});
+        socket.emit("login", {username: "hi", password: "hello"});
     });
 
     it("from the site works correclty", function(done) {
 
-        function cb() {
-            done();
-            nunt.removeListener('login-succeded', cb);
-        }
-
-        nunt.on("login-succeded", cb);
-
         client
             .url('http://localhost:8808')
+            .call(function() { console.log("d"); })
             .pause(500)
+            .call(function() { console.log("d"); })
+            .waitForVisible("#username", 5000)
+            .call(function() { console.log("d"); })
             .setValue("#username", "hi")
             .setValue("#password", "hello")
-            .click("button");
+            .click("button")
+            .waitForVisible("table", 5000)
+            .call(function() { console.log("d"); })
+            .call(done);
 
     });
 
@@ -120,20 +120,17 @@ describe("Login", function() {
         var hasFailed = false;
         function cb() {
             hasFailed.should.equal(true);
-            nunt.removeListener('login-succeded', cb);
             done();
         }
 
         function cbError() {
             hasFailed = true;
-            nunt.removeListener('login-error', cbError);
-            var mockClient = {handshake: {session: {} }};
-            nunt.send("login", {username: "data", password: "maskin", _client: mockClient});
+            socket.emit("login", {username: "data", password: "maskin"});
         }
 
 
-        nunt.on("login-succeded", cb);
-        nunt.on("login-error", cbError);
+        socket.once("login-succeded", cb);
+        socket.once("login-error", cbError);
 
         var deploys = [{
             "name": "Webhook Deployer",
@@ -148,9 +145,7 @@ describe("Login", function() {
 
             webdep.init({username: "data", password: "maskin", deploys: deploys, logToConsole: false, port: 8808}, function(err) {
 
-                // fake client
-                var mockClient = {handshake: {session: {} }};
-                nunt.send("login", {username: "hi", password: "hello", _client: mockClient});
+                socket.emit("login", {username: "hi", password: "hello"});
 
             });
         });
