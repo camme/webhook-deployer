@@ -84,6 +84,10 @@ Create a deploys.json (there is an deploys.json.example to look at) inside the f
 Config it with the following format:
 
     {
+        "webui": true,
+        "port": 8080,
+        "username": "hi",
+        "password": "hello",
         "deploys": [{
             "name": "Your deploy name",
             "type": "github",
@@ -97,6 +101,9 @@ Config it with the following format:
 So an actual example might look like this:
 
     {
+        "port": 8080,
+        "username": "supercooluser",
+        "password": "with-a-LONG-password",
         "deploys": [{
             "name": "Deploy webhook deploy",
             "type": "github",
