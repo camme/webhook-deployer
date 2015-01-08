@@ -114,7 +114,7 @@ So an actual example might look like this:
         }]
     }
 
-You also need to add the webhook to your github repo. The call should be made to http://your.cool.server:8080/incoming/yourcoolprojectname
+You also need to add the webhook to your github repo. The call should be made to http://your.cool.server:8080/incoming/webhook-deployer
 
 The above example would run "git pull" whenever a push to the master branch for https://github.com/Camme/webhook-deployer is made.
 
