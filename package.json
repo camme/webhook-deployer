@@ -1,6 +1,6 @@
 {
   "name": "webhook-deployer",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,9 @@
     "webhook"
   ],
   "preferGlobal": true,
-  "bin": "bin/webhook-deployer",
+  "bin": {
+    "webhook-deployer": "./bin/webhook-deployer"
+  }
   "author": "Camilo Tapia",
   "license": "MIT",
   "devDependencies": {
