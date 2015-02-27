@@ -15,7 +15,7 @@
         var buttons = document.querySelector(".deploys-box button");
         buttons.addEventListener("click", function() {
             var id = this.parentNode.parentNode.getAttribute("data-id");
-            nunt.send("run-deploy", {id: id});
+            socket.emit("run-deploy", {id: id});
         }, false);
     });
 

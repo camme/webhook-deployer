@@ -1,0 +1,10 @@
+{
+    "deploys": [{
+        "name": "Webhook Deployer",
+        "type": "github",
+        "repo": "https://github.com/camme/webhook-deployer",
+        "basepath": "./",
+        "command": "echo HELLO WORLD",
+        "branch": "master"
+    }]
+}
