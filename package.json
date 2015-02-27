@@ -21,7 +21,7 @@
   "preferGlobal": true,
   "bin": {
     "webhook-deployer": "./bin/webhook-deployer"
-  }
+  },
   "author": "Camilo Tapia",
   "license": "MIT",
   "devDependencies": {
