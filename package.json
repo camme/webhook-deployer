@@ -1,6 +1,6 @@
 {
   "name": "webhook-deployer",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,8 @@
     "grunt-simple-mocha": "~0.4.0",
     "grunt-cli": "~0.1.8",
     "webdriverjs": "~0.7.3",
-    "webdriverio": "^2.2.3"
+    "webdriverio": "^2.2.3",
+    "selenium-standalone": "^2.43.1-5"
   },
   "dependencies": {
     "commander": "~1.1.1",
@@ -38,7 +39,6 @@
     "mustache": "~0.7.2",
     "node-github": "0.0.3",
     "prompt": "~0.2.9",
-    "selenium-standalone": "^2.43.1-5",
     "socket.io": "^1.1.0",
     "stylus": "~0.32.1",
     "winser": "~0.1.3"
