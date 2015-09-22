@@ -12,11 +12,15 @@
         var html = Mustache.to_html(template, e);
         document.querySelector(".deploys-box tbody").innerHTML = html;
 
-        var buttons = document.querySelector(".deploys-box button");
-        buttons.addEventListener("click", function() {
-            var id = this.parentNode.parentNode.getAttribute("data-id");
-            socket.emit("run-deploy", {id: id});
-        }, false);
+        var buttons = document.querySelectorAll(".deploys-box button");
+        for(var i = 0, ii = buttons.length; i < ii; i++) {
+            var button = buttons[i];
+            button.addEventListener("click", function() {
+                var id = this.parentNode.parentNode.getAttribute("data-id");
+                console.log("TJENA", id);
+                socket.emit("run-deploy", {id: id});
+            }, false);
+        }
     });
 
     socket.on("not-logged-in", function(e) {
