@@ -37,6 +37,7 @@
   "dependencies": {
     "commander": "~1.1.1",
     "cookies": "~0.3.6",
+    "crypto": "0.0.3",
     "keygrip": "~0.2.2",
     "mustache": "~0.7.2",
     "node-github": "0.0.3",
