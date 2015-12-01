@@ -14,7 +14,7 @@
                 <h1>Webhook Deployer v{{version}}</h1>
                 <p>Your auto-deploy companion</p>
             </header>
-            <div class="login-box">
+            <form class="login-box">
                 <div class="input-box">
                     <label>username:</label>
                     <input type="text" id="username" />
@@ -25,7 +25,7 @@
                 </div>
                 <button id="login-button">login</button>
                 <div class="error">error!</div>
-            </div>
+            </form>
             <div class="deploys-box">
                 <table>
                     <thead>
@@ -47,7 +47,7 @@
                 </table>
             </div>
         </div>
-        <div class="log-container">
+        <div class="log-container" id="log-container">
             <h2>Log:</h2>
             <pre id="log">{{log}}</pre>
         </div>
