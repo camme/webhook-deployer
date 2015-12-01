@@ -32,7 +32,7 @@
     "grunt-cli": "~0.1.8",
     "webdriverjs": "~0.7.3",
     "webdriverio": "^2.2.3",
-    "selenium-standalone": "^2.43.1-5"
+    "selenium-standalone": "2.43.1-5"
   },
   "dependencies": {
     "commander": "~1.1.1",
