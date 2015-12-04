@@ -31,14 +31,18 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>repo</th>
-                            <th>branch</th>
+                            <th>Name</th>
+                            <th>Commane</th>
+                            <th>Repo</th>
+                            <th>Branch</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#deploys}}
-                        <tr>
-                            <td></td>
+                        <tr data-id="{{deploy.id}}">
+                            <td><button>DEPLOY</button></td>
+                            <td>{{deploy.name}}</td>
+                            <td>{{deploy.command}}</td>
                             <td>{{deploy.repo}}</td>
                             <td>{{deploy.branch}}</td>
                         </tr>

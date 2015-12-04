@@ -1,6 +1,7 @@
 (function() {
 
     var socket = io(); 
+    var template = '{{#deploys}} <tr data-id="{{deploy.id}}"> <td><button>DEPLOY</button></td> <td>{{deploy.name}}</td> <td>{{deploy.command}}</td> <td>{{deploy.repo}}</td> <td>{{deploy.branch}}</td> </tr> {{/deploys}}';
 
     socket.on("log", function(e) {
         var logDom = document.getElementById("log");
@@ -9,7 +10,6 @@
     });
 
     socket.on("deploys", function(e) {
-        var template = "{{#deploys}}<tr data-id='{{deploy.id}}'><td><button>DEPLOY</button><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
         var html = Mustache.to_html(template, e);
         document.querySelector(".deploys-box tbody").innerHTML = html;
 
