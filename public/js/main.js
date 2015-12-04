@@ -5,7 +5,11 @@
 
     socket.on("log", function(e) {
         var logDom = document.getElementById("log");
-        logDom.innerHTML = logDom.innerHTML + '<br>' + e.log;
+        var innerHTML = logDom.innerHTML + '<br>' + e.log;
+        if(innerHTML.length > 30000) {
+            innerHTML = innerHTML.substr(innerHTML.length - 30000);
+        }
+        logDom.innerHTML = innerHTML;
         document.getElementById("log-container").scrollTop = logDom.offsetHeight;
     });
 
