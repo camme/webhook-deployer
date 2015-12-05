@@ -1,6 +1,6 @@
 {
   "name": "webhook-deployer",
-  "version": "0.7.7",
+  "version": "0.7.11",
   "description": "Deployer server app triggered by (github) webhooks",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "grunt-cli": "~0.1.8",
     "webdriverjs": "~0.7.3",
     "webdriverio": "^2.2.3",
-    "selenium-standalone": "^2.43.1-5"
+    "selenium-standalone": "2.43.1-5"
   },
   "dependencies": {
     "commander": "~1.1.1",

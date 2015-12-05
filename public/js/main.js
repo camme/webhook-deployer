@@ -1,20 +1,26 @@
 (function() {
 
     var socket = io(); 
+    var template = '{{#deploys}} <tr data-id="{{deploy.id}}"> <td><button>DEPLOY</button></td> <td>{{deploy.name}}</td> <td>{{deploy.command}}</td> <td>{{deploy.repo}}</td> <td>{{deploy.branch}}</td> </tr> {{/deploys}}';
 
     socket.on("log", function(e) {
         var logDom = document.getElementById("log");
-        logDom.innerHTML = e.log;
+        var innerHTML = logDom.innerHTML + '<br>' + e.log;
+        if(innerHTML.length > 30000) {
+            innerHTML = innerHTML.substr(innerHTML.length - 30000);
+        }
+        logDom.innerHTML = innerHTML;
+        document.getElementById("log-container").scrollTop = logDom.offsetHeight;
     });
 
     socket.on("deploys", function(e) {
-        var template = "{{#deploys}}<tr data-id='{{deploy.id}}'><td><button>DEPLOY</button><td>{{deploy.repo}}</td><td>{{deploy.branch}}</td></tr>{{/deploys}}";
         var html = Mustache.to_html(template, e);
         document.querySelector(".deploys-box tbody").innerHTML = html;
 
         var buttons = document.querySelectorAll(".deploys-box button");
         for(var i = 0, ii = buttons.length; i < ii; i++) {
             var button = buttons[i];
+            /*jshint -W083*/
             button.addEventListener("click", function() {
                 var id = this.parentNode.parentNode.getAttribute("data-id");
                 console.log("TJENA", id);
@@ -24,7 +30,6 @@
     });
 
     socket.on("not-logged-in", function(e) {
-
         var logDom = document.getElementById("log");
         logDom.innerHTML = "Please login!";
         var logContainer = document.querySelector(".login-box");
@@ -33,11 +38,12 @@
         document.querySelector(".deploys-box").style.display = "none";
         document.querySelector(".login-box .error").style.display = "none";
 
-        document.querySelector(".login-box button").addEventListener("click", function() {
+        document.querySelector("form.login-box").addEventListener("submit", function(evt) {
             document.getElementById("log").innerHTML = "Trying to log in...";
             var username = document.querySelector(".login-box #username").value;
             var password = document.querySelector(".login-box #password").value;
             socket.emit("login", {username: username, password: password});
+            evt.preventDefault();
         }, false);
 
     });
