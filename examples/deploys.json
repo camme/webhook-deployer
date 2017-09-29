@@ -1,9 +1,12 @@
 {
+    "webui": true,
+    "username": "khanh.tq",
+    "password": "********",
     "deploys": [{
-        "name": "Webhook Deployer",
-        "type": "github",
-        "repo": "https://github.com/Camme/webhook-deployer",
-        "basepath": "/Users/camilo/Projects/24hr-deployer",
+        "name": "Skeleton",
+        "type": "gitlab",
+        "repo": "git@gitlab.com:*****/skeleton.git",
+        "basepath": "/Users/khanh/****",
         "command": "git pull",
         "branch": "master"
     }]
