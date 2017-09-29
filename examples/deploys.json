@@ -1,12 +1,12 @@
 {
     "webui": true,
     "username": "khanh.tq",
-    "password": "gu123451",
+    "password": "********",
     "deploys": [{
         "name": "Skeleton",
         "type": "gitlab",
-        "repo": "git@gitlab.com:gu_magneto/skeleton.git",
-        "basepath": "/Users/khanh/Sites/prj_magneto/skeleton",
+        "repo": "git@gitlab.com:*****/skeleton.git",
+        "basepath": "/Users/khanh/****",
         "command": "git pull",
         "branch": "master"
     }]
